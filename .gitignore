@@ -1,0 +1,65 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Swap files
+*.swp
+
+# PDF Files
+*.pdf
+
+# Image files
+*.jpg
+*.png
+
+# Data files
+*.dat
+
+# Text files
+*.doc
+*.docx
+*.odt
+# Shell scipts
+#*.sh
+
+# Build directories
+**/build/
+**/Build/
+*/Build/
+Build/
+cmake-build-debug/
+.vscode
+
+# Other
+*.xml
+*.iml
+.idea/
