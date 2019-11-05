@@ -23,7 +23,7 @@ void metodaPicarda(double beta, int N, double gamma, double Tmax, double dT, dou
         while (true)
         {
             curr = prev + (dT / 2.0) * ((alpha(beta, N, gamma) * prev - (beta * pow(prev, 2)) + (alpha(beta, N, gamma) * prev_mi - beta * (pow(prev_mi, 2)))));
-            if (fabs(curr - prev_mi) <= TOL || --mi >= 0)
+            if (fabs(curr - prev_mi) <= TOL || --mi < 0)
                 break;
             else
             {
@@ -52,7 +52,7 @@ void metodaNewtona(double beta, int N, double gamma, double Tmax, double dT, dou
         while (true)
         {
             curr = prev_mi - ((prev_mi - prev - (dT / 2.0) * ((alpha(beta, N, gamma) * prev - beta * pow(prev, 2)) + (alpha(beta, N, gamma) * prev_mi - beta * (pow(prev_mi, 2))))) / (1.0 - (dT / 2.0) * (alpha(beta, N, gamma) - 2 * beta * prev_mi)));
-            if (fabs(curr - prev_mi) <= TOL || --mi >= 0)
+            if (fabs(curr - prev_mi) <= TOL || --mi < 0)
                 break;
             else
             {
