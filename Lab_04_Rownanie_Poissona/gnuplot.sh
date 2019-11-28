@@ -47,20 +47,26 @@ set ylabel "y" # etykieta osi OY
 set zlabel "wartosc"
 
 set logscale z
-# set pm3d map
+#############################################################################################################
 
 set title "Relaksacja globalna blad"
 set out "relaksacja_globalna_err_omega=0.6.jpg"
 plot "relaksacja_globalna_err_omega=0.600000.dat" u 1:2:3 w p pt 7 palette t 'V'
+#############################################################################################################
+
 
 set title "Relaksacja globalna blad"
 set out "relaksacja_globalna_err_omega=1.0.jpg"
 plot "relaksacja_globalna_err_omega=1.000000.dat" u 1:2:3 w p pt 7 palette t 'V'
 
+#############################################################################################################
+
 set title "Relaksacja globalna"
 set out "relaksacja_globalna_omega=0.6.jpg"
-plot "relaksacja_globalna_omega=0.600000.dat" u 1:2:3 w p pt 7 palette t 'Error'
+plot "relaksacja_globalna_omega=0.600000.dat" u 1:2:3 w p pt 7 palette t 'blad'
+
+#############################################################################################################
 
 set title "Relaksacja globalna"
 set out "relaksacja_globalna_omega=1.0.jpg"
-plot "relaksacja_globalna_omega=1.000000.dat" u 1:2:3 w p pt 7 palette t 'Error'
+plot "relaksacja_globalna_omega=1.000000.dat" u 1:2:3 w p pt 7 palette t 'blad'
