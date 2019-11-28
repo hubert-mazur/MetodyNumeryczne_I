@@ -35,7 +35,7 @@ void metodaJawnaEulera(double initialValue, double lambda, double timeStart, dou
     for (double it = timeStart; it <= timeStop; it += timeStamp)
     {
         curr = prev + timeStamp * lambda * prev;
-        fprintf(file, "%lf %lf %lf\n", it, curr, rozwiazanieAnalityczne(it, lambda) - curr);
+        fprintf(file, "%lf %lf %lf\n", it, curr, -rozwiazanieAnalityczne(it, lambda) + curr);
         prev = curr;
     }
     fclose(file);
@@ -54,7 +54,7 @@ void metodaRK2(double initialValue, double lambda, double timeStart, double time
     for (double it = timeStart; it <= timeStop; it += timeStamp)
     {
         curr = prev + (timeStamp / 2.0) * (lambda * prev + (lambda * (prev + timeStamp * lambda * prev)));
-        fprintf(file, "%lf %lf %lf\n", it, curr, rozwiazanieAnalityczne(it, lambda) - curr);
+        fprintf(file, "%lf %lf %lf\n", it, curr, -rozwiazanieAnalityczne(it, lambda) + curr);
         prev = curr;
     }
     fclose(file);
@@ -77,7 +77,7 @@ void metodaRK4(double initialValue, double lambda, double timeStart, double time
         double k3 = lambda * (prev + timeStamp * k2 / 2.0);
         double k4 = lambda * (prev + timeStamp * k3);
         curr = prev + (timeStamp / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
-        fprintf(file, "%lf %lf %lf\n", it, curr, rozwiazanieAnalityczne(it, lambda) - curr);
+        fprintf(file, "%lf %lf %lf\n", it, curr, -rozwiazanieAnalityczne(it, lambda) + curr);
         prev = curr;
     }
     fclose(file);
@@ -126,10 +126,10 @@ void RLC(double R, double L, double C, double deltaT, double initI, double initQ
 
 int main()
 {
-    metodaJawnaEulera(1, -1, 0, 5, .01);
-    metodaJawnaEulera(1, -1, 0, 5, .1);
-    metodaJawnaEulera(1, -1, 0, 5, 1.0);
-    rozwiazanieAnalityczne(-1, 0, 5, 0.01);
+    metodaJawnaEulera(1.0, -1.0, 0.0, 5.0, 0.01);
+    metodaJawnaEulera(1.0, -1.0, 0.0, 5.0, 0.1);
+    metodaJawnaEulera(1.0, -1.0, 0.0, 5.0, 1.0);
+    rozwiazanieAnalityczne(-1.0, 0.0, 5.0, 0.01);
     metodaRK2(1, -1, 0, 5, .01);
     metodaRK2(1, -1, 0, 5, .1);
     metodaRK2(1, -1, 0, 5, 1.0);
