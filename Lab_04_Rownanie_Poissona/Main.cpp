@@ -4,8 +4,8 @@
 #include <vector>
 #include <cmath>
 #include <vector>
-#include <mutex>
 #include <thread>
+
 
 const double epsilon = 1.0;
 const double delta = 0.1;
@@ -65,36 +65,45 @@ void relaksacjaGlobalna(double omegaG, double V, double TOL, double epsilon)
 {
     std::vector<double> S;
     int it = 0;
-
     FILE *file = fopen(&("relaksacja_globalna_omega=" + std::to_string(omegaG) + ".dat")[0], "w");
     FILE *file2 = fopen(&("relaksacja_globalna_S_omega=" + std::to_string(omegaG) + ".dat")[0], "w");
     FILE *file3 = fopen(&("relaksacja_globalna_err_omega=" + std::to_string(omegaG) + ".dat")[0], "w");
 
-    double **V_s, **V_n;
+    double **V_s, **V_n, **rho_tab;
 
     V_s = init();
     V_n = init();
+    rho_tab = init();
 
-    for (int i = 0; i <= nx; i++)
-    {
+    for (int i=0;i<=nx;i++)
+        for (int j=0;j<=ny;j++)
+            rho_tab[i][j] = p(delta * i, delta * j);
+
+
+
+    for (int i=0;i<nx;i++) {
         V_s[i][0] = V;
         V_n[i][0] = V;
+        V_s[i][ny] = 0;
+        V_n[i][ny] = 0;
     }
 
-    S.push_back(0);
+
+
+    S.push_back(100);
 
     while (true)
     {
+        
         for (int i = 1; i < nx; i++)
         {
             for (int j = 1; j < ny; j++)
             {
-                // std::cout << i << " " << j << "\n";
-                V_n[i][j] = (1.0 / 4.0) * (V_s[i + 1][j] + V_s[i - 1][j] + V_s[i][j + 1] + V_s[i][j - 1] + (pow(delta, 2) / epsilon) * p(i, j));
+                V_n[i][j] = (1.0 / 4.0) * (V_s[i + 1][j] + V_s[i - 1][j] + V_s[i][j + 1] + V_s[i][j - 1] + (pow(delta, 2) / epsilon) * rho_tab[i][j]);
             }
         }
 
-        for (int j = 0; j <= ny; j++)
+        for (int j = 1; j < ny; j++)
         {
             V_n[0][j] = V_n[1][j];
             V_n[nx][j] = V_n[nx - 1][j];
@@ -104,26 +113,30 @@ void relaksacjaGlobalna(double omegaG, double V, double TOL, double epsilon)
             for (int j = 0; j <= ny; j++)
                 V_s[i][j] = (1.0 - omegaG) * V_s[i][j] + omegaG * V_n[i][j];
 
-        S.push_back(stopCondition(V_n));
 
+        S.push_back(stopCondition(V_s));
         fprintf(file2, "%d %g\n", it, S.at(it + 1));
+        it++;
 
-        if (it > 0)
-        {
-            // std::cout << fabs(S.at(it) - S.at(it - 1)) << "\n";
-            if (fabs((S[it] - S[it - 1]) / S[it - 1]) < TOL)
+        if (it%10 == 0) {
+
+            if (fabs((S[it] - S[it - 1]) / S[it]) < TOL)
                 break;
         }
-        it++;
+
     }
 
-    for (int i = 0; i <= nx; i++)
+    for (int i = 0; i <= nx; i++) {
         for (int j = 0; j <= ny; j++)
-            fprintf(file, "%d %d %g\n", i, j, V_s[i][j]);
+            fprintf(file, "%d %d %lf\n", i, j, V_n[i][j]);
+    fprintf(file, "\n");
+    }
 
-    for (int i = 1; i < nx; i++)
+    for (int i = 1; i < nx; i++) {
         for (int j = 1; j < ny; j++)
-            fprintf(file3, "%d %d %lf\n", i, j, ((V_n[i + 1][j] - 2 * V_n[i][j] + V_n[i - 1][j]) / pow(delta, 2) + (V_n[i][j + 1] - 2 * V_n[i][j] + V_n[i][j - 1]) / pow(delta, 2)) + p(i, j) / epsilon);
+            fprintf(file3, "%d %d %lf\n", i, j, V_s[i + 1][j] - V_s[i][j] + V_s[i - 1][j] + (V_s[i][j + 1] - V_s[i][j] + V_s[i][j - 1]) + rho_tab[i][j] / epsilon);
+    fprintf(file3, "\n");
+    }
 
     fclose(file);
     fclose(file2);
@@ -134,40 +147,48 @@ void relaksacjaGlobalna(double omegaG, double V, double TOL, double epsilon)
 
 void relaksacjaLokalna(double omegaL, double V, double TOL, double epsilon)
 {
-    double **V_n;
+    double **V_n, **rho_tab;
 
     std::vector<double> S;
     int it = 0;
-
+    
     FILE *file2 = fopen(&("relaksacja_lokalna_S_omega=" + std::to_string(omegaL) + ".dat")[0], "w");
 
     V_n = init();
+    rho_tab = init();
 
-    for (int i = 0; i <= nx; i++)
+
+        for (int i=0;i<=nx;i++)
+            for (int j=0;j<=ny;j++)
+                rho_tab[i][j] = p(i,j);
+
+
+    for (int i = 0; i < nx; i++)
     {
-        V_n[i][0] = V;
+        V_n[i][0] = 0;
+        V_n[i][ny] = V;
     }
 
-    S.push_back(1);
+    S.push_back(100);
+
     while (true)
     {
         for (int i = 1; i < nx; i++)
             for (int j = 1; j < ny; j++)
-                V_n[i][j] = (1.0 - omegaL) * V_n[i][j] + (omegaL / 4.0) * (V_n[i + 1][j] + V_n[i - 1][j] + V_n[i][j + 1] + V_n[i][j - 1] + (pow(delta,2)/epsilon) *p(i, j));
+                V_n[i][j] = (1.0 - omegaL) * V_n[i][j] + (omegaL / 4.0) * (V_n[i + 1][j] + V_n[i - 1][j] + V_n[i][j + 1] + V_n[i][j - 1] + (pow(delta,2)/epsilon) *rho_tab[i][j]);
 
         for (int i = 0; i <= ny; i++)
         {
-            V_n[0][i] = V_n[1][i];
-            V_n[nx][i] = V_n[nx - 1][i];
-        }
+            V_n[0][i] = V_n[1][i];  
+            V_n[nx][i] = V_n[nx - 1][i];    
+        }    
 
         S.push_back(stopCondition(V_n));
 
         fprintf(file2, "%d %g\n", it, S.at(it));
 
-        if (it > 0)
+        if (it % 10 == 0)
         {
-            // std::cout << fabs(S.at(it) - S.at(it - 1)) << "\n";
             if (fabs((S[it] - S[it - 1]) / S[it - 1]) < TOL)
                 break;
         }
@@ -180,13 +201,12 @@ void relaksacjaLokalna(double omegaL, double V, double TOL, double epsilon)
 
 int main()
 {
-
-    std::thread th1(relaksacjaGlobalna, 0.6, 10, pow(10, -8), 1);
-    std::thread th2(relaksacjaGlobalna, 1.0, 10, pow(10, -8), 1);
-    std::thread th3(relaksacjaLokalna, 1.0, 10, pow(10, -8), 1);
-    std::thread th4(relaksacjaLokalna, 1.4, 10, pow(10, -8), 1);
-    std::thread th5(relaksacjaLokalna, 1.8, 10, pow(10, -8), 1);
-    std::thread th6(relaksacjaLokalna, 1.9, 10, pow(10, -8), 1);
+    std::thread th1(relaksacjaGlobalna, 0.6,10,pow(10,-8),1);
+    std::thread th2(relaksacjaGlobalna, 1.0,10,pow(10,-8),1);
+    std::thread th3(relaksacjaLokalna, 1.0,10,pow(10,-8),1);
+    std::thread th4(relaksacjaLokalna, 1.4,10,pow(10,-8),1);
+    std::thread th5(relaksacjaLokalna, 1.8,10,pow(10,-8),1);
+    std::thread th6(relaksacjaLokalna, 1.9,10,pow(10,-8),1);
 
     th1.join();
     th2.join();
@@ -194,4 +214,5 @@ int main()
     th4.join();
     th5.join();
     th6.join();
+
 }

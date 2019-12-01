@@ -42,31 +42,36 @@ plot 'relaksacja_lokalna_S_omega=1.000000.dat' using 1:2 with lines title "w=1.0
 #############################################################################################################
 
 unset logscale x
-set xlabel "x" # etykieta osi OX
-set ylabel "y" # etykieta osi OY
-set zlabel "wartosc"
-
-set logscale z
-#############################################################################################################
-
-set title "Relaksacja globalna blad"
-set out "relaksacja_globalna_err_omega=0.6.jpg"
-plot "relaksacja_globalna_err_omega=0.600000.dat" u 1:2:3 w p pt 7 palette t 'V'
-#############################################################################################################
-
-
-set title "Relaksacja globalna blad"
-set out "relaksacja_globalna_err_omega=1.0.jpg"
-plot "relaksacja_globalna_err_omega=1.000000.dat" u 1:2:3 w p pt 7 palette t 'V'
 
 #############################################################################################################
 
-set title "Relaksacja globalna"
-set out "relaksacja_globalna_omega=0.6.jpg"
-plot "relaksacja_globalna_omega=0.600000.dat" u 1:2:3 w p pt 7 palette t 'blad'
+
 
 #############################################################################################################
+set view map
+unset contour
 
-set title "Relaksacja globalna"
-set out "relaksacja_globalna_omega=1.0.jpg"
-plot "relaksacja_globalna_omega=1.000000.dat" u 1:2:3 w p pt 7 palette t 'blad'
+set out "v_omega=0.6.jpg"
+set palette defined (-1 'blue', 0 'white', 1 'red')
+splot 'relaksacja_globalna_omega=0.600000.dat' u 1:2:3 w pm3d
+#############################################################################################################
+set view map
+unset contour
+
+set out "v_omega=1.0.jpg"
+set palette defined (-1 'blue', 0 'white', 1 'red')
+splot 'relaksacja_globalna_omega=1.000000.dat' u 1:2:3 w pm3d
+#############################################################################################################
+set view map
+unset contour
+
+set out "v_omega=0.6_err.jpg"
+set palette defined (-1 'blue', 0 'white', 1 'red')
+splot 'relaksacja_globalna_err_omega=0.600000.dat' u 1:2:3 w pm3d
+#############################################################################################################
+set view map
+unset contour
+
+set out "v_omega=1.0_err.jpg"
+set palette defined (-1 'blue', 0 'white', 1 'red')
+splot 'relaksacja_globalna_err_omega=1.000000.dat' u 1:2:3 w pm3d
