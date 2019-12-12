@@ -2,10 +2,6 @@
 set terminal post enhanced colour solid font 14  # wybor formatu, w jakim chcemy utworzyc wynikowy rysunek
 set terminal jpeg
 
-set xlabel "Krok czasowy" # etykieta osi OX
-set ylabel "Wartosc" # etykieta osi OY
-set grid # wlaczenie widoczności siatki pomocniczej
-
 
 set style line 1  lc rgb 'red' lt 1 lw 2 # --- blue
 set style line 2  lc rgb 'blue' lt 1 lw 2 #      .
