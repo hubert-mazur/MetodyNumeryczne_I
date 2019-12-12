@@ -154,6 +154,7 @@ void licz_poisson(double epsilon1, double epsilon2, double V1, double V2, double
 
     file_a.close();
     file_b.close();
+    file_V.close();
 
     pmgmres_ilu_cr(N, nz_num, &ia[0], &ja[0], &a[0], &V[0], &b[0], 500, 500, pow(10, -8), pow(10, -8));
 
