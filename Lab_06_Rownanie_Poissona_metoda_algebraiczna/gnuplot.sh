@@ -27,7 +27,7 @@ set view map
 unset contour
 
 set title "nx = ny = 50, rho=0, eps1 = eps2 = 1"
-set out "V_rho_null=1_eps1=1.000000_eps2=1.000000_nx_ny=50_50.jpg"
+set out "5a.jpg"
 set palette defined (-1 'blue', 0 'white', 1 'red')
 splot 'V_rho_null=1_eps1=1.000000_eps2=1.000000_nx_ny=50_50.dat' u 1:2:3 w pm3d
 
@@ -37,7 +37,7 @@ set view map
 unset contour
 
 set title "nx = ny = 100, rho=0, eps1 = eps2 = 1"
-set out "V_rho_null=1_eps1=1.000000_eps2=1.000000_nx_ny=100_100.jpg"
+set out "5b.jpg"
 set palette defined (-1 'blue', 0 'white', 1 'red')
 splot 'V_rho_null=1_eps1=1.000000_eps2=1.000000_nx_ny=100_100.dat' u 1:2:3 w pm3d
 
@@ -47,7 +47,7 @@ set view map
 unset contour
 
 set title "nx = ny = 200, rho=0, eps1 = eps2 = 1"
-set out "V_rho_null=1_eps1=1.000000_eps2=1.000000_nx_ny=200_200.jpg"
+set out "5c.jpg"
 set palette defined (-1 'blue', 0 'white', 1 'red')
 splot 'V_rho_null=1_eps1=1.000000_eps2=1.000000_nx_ny=200_200.dat' u 1:2:3 w pm3d
 
@@ -57,7 +57,7 @@ set view map
 unset contour
 
 set title "nx = ny = 100, rho!=0, eps1 = eps2 = 1"
-set out "V_rho_null=0_eps1=1.000000_eps2=1.000000_nx_ny=100_100.jpg"
+set out "6a.jpg"
 set palette defined (-1 'blue', 0 'white', 1 'red')
 splot 'V_rho_null=0_eps1=1.000000_eps2=1.000000_nx_ny=100_100.dat' u 1:2:3 w pm3d
 
@@ -67,7 +67,7 @@ set view map
 unset contour
 
 set title "nx = ny = 100, rho!=0, eps1 =1,  eps2 = 2"
-set out "V_rho_null=0_eps1=1.000000_eps2=2.000000_nx_ny=100_100.jpg"
+set out "6b.jpg"
 set palette defined (-1 'blue', 0 'white', 1 'red')
 splot 'V_rho_null=0_eps1=1.000000_eps2=2.000000_nx_ny=100_100.dat' u 1:2:3 w pm3d
 
@@ -77,6 +77,6 @@ set view map
 unset contour
 
 set title "nx = ny = 100, rho!=0, eps1 =1,  eps2 = 10"
-set out "V_rho_null=0_eps1=1.000000_eps2=10.000000_nx_ny=100_100.jpg"
+set out "6c.jpg"
 set palette defined (-1 'blue', 0 'white', 1 'red')
 splot 'V_rho_null=0_eps1=1.000000_eps2=10.000000_nx_ny=100_100.dat' u 1:2:3 w pm3d

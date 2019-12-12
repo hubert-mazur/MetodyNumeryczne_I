@@ -144,9 +144,9 @@ void licz_poisson(double epsilon1, double epsilon2, double V1, double V2, double
             ja[k] = l + nx + 1;
         }
 
-        if (a[l] > pow(10,-10))
+        if (a[l] > pow(10, -10))
             file_a << l << " " << i << " " << j << " " << a[l] << "\n";
-        if (b[l] > pow(10,-10))
+        if (b[l] > pow(10, -10))
             file_b << l << " " << i << " " << j << " " << b[l] << "\n";
     }
     nz_num = k + 1;
@@ -154,7 +154,6 @@ void licz_poisson(double epsilon1, double epsilon2, double V1, double V2, double
 
     file_a.close();
     file_b.close();
-    file_V.close();
 
     pmgmres_ilu_cr(N, nz_num, &ia[0], &ja[0], &a[0], &V[0], &b[0], 500, 500, pow(10, -8), pow(10, -8));
 
@@ -167,4 +166,6 @@ void licz_poisson(double epsilon1, double epsilon2, double V1, double V2, double
         if (i == nx)
             file_V << std::endl;
     }
+
+    file_V.close();
 }
