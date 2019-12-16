@@ -61,7 +61,7 @@ splot 'V_rho_null=0_eps1=1.000000_eps2=1.000000_nx_ny=100_100.dat' u 1:2:3 w pm3
 
 set view map
 unset contour
-
+set cbrange [-0.8:0.8]
 set title "nx = ny = 100, rho!=0, eps1 =1,  eps2 = 2"
 set out "6b.jpg"
 set palette defined (-1 'blue', 0 'white', 1 'red')

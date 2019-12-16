@@ -8,6 +8,7 @@ int main()
     licz_poisson(1, 1, 0, 0, 0, 0, 100, 100, false);
     licz_poisson(1, 2, 0, 0, 0, 0, 100, 100, false);
     licz_poisson(1, 10, 0, 0, 0, 0, 100, 100, false);
+    licz_poisson(1, 1, 10, -10, 10, -10,4, 4, true);
 }
 
 void licz_poisson(double epsilon1, double epsilon2, double V1, double V2, double V3, double V4, int nx, int ny, bool rho_null)

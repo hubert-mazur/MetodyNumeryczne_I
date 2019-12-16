@@ -87,8 +87,8 @@ void relaksacja(double ***V, int k)
             break;
     }
 
-    for (int i = 0; i <= nx; i++) {
-        for (int j = 0; j <= ny; j++)
+    for (int i = 0; i <= nx; i+=k) {
+        for (int j = 0; j <= ny; j+=k)
             potencjal << i << " " << j << " " << (*V)[i][j] << "\n";
         potencjal << "\n";
     }
@@ -96,14 +96,18 @@ void relaksacja(double ***V, int k)
 
     if (k != 1)
     {
-        for (int i = 0; i < nx - k; i += k)
+        for (int i = 0; i <= nx - k; i += k)
         {
-            for (int j = 0; j < ny - k; j += k)
+            for (int j = 0; j <= ny - k; j += k)
             {
                 (*V)[i + k / 2][j + k / 2] = 0.25 * ((*V)[i][j] + (*V)[i + k][j] + (*V)[i][j + k] + (*V)[i + k][j + k]);
-                (*V)[i + k][j + k / 2] = 0.5 * ((*V)[i + k][j] + (*V)[i + k][j + k]);
-                (*V)[i + k / 2][j + k] = 0.5 * ((*V)[i][j + k] + (*V)[i + k][j + k]);
-                (*V)[i + k / 2][j] = 0.5 * ((*V)[i][j] + (*V)[i + k][j]);
+                if (i < (nx - k))
+                    (*V)[i + k][j + k / 2] = 0.5 * ((*V)[i + k][j] + (*V)[i + k][j + k]);
+                if (j < (ny-k))
+                    (*V)[i + k / 2][j + k] = 0.5 * ((*V)[i][j + k] + (*V)[i + k][j + k]);
+                if ( j > 0)
+                    (*V)[i + k / 2][j] = 0.5 * ((*V)[i][j] + (*V)[i + k][j]);
+                if ( i>0 )
                 (*V)[i][j + k / 2] = 0.5 * ((*V)[i][j] + (*V)[i][j + k]);
             }
         }
