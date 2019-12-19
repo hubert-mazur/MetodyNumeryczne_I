@@ -115,12 +115,12 @@ void relaksacja_NS(double Q_in)
 
     warunki_brzegowe_PSI(psi, Q_in, Q_out, &y[0]);
 
-    file << "i "
-         << "j "
-         << "psi "
-         << "ksi "
-         << "dPSI/dy "
-         << "-dPSI/dx" << std::endl;
+    // file << "i "
+    //      << "j "
+    //      << "psi "
+    //      << "ksi "
+    //      << "dPSI/dy "
+    //      << "-dPSI/dx" << std::endl;
 
     for (int it = 1; it < IT_MAX; it++)
     {
