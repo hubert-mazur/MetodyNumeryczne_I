@@ -3,7 +3,7 @@
 #include <string>
 #include <stdio.h>
 #include <vector>
-#include <iomanip>
+#include <iomanip>a
 
 
 double rozwiazanieAnalityczne(double arg_t, double lambda)
