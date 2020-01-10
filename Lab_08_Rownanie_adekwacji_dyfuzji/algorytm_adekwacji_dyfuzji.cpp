@@ -110,15 +110,14 @@ void solve_AD_equation_(double D, int IT_MAX)
 				{
 					if ((i >= i1 && i <= i2) && (j <= j2))
 						continue;
-					else if (i == 0 || i == nx)
+					else if (i == 0)
 					{
-						i = (i == 0 ? nx : 0);
 						u1[i][j] = (1.0 / (1 + (2 * D * deltaT) / (pow(delta, 2)))) * (u0[i][j] -
 																					   ((deltaT) / (2)) * vx[i][j] *
-																					   (((u0[i + 1][j] - u0[i - 1][j]) /
+																					   (((u0[i + 1][j] - u0[nx][j]) /
 																						 (2 * delta)) +
 																						pow((u1[i + 1][j] -
-																							 u1[i - 1][j]) /
+																							 u1[nx][j]) /
 																							(2 * delta), k))
 																					   - ((deltaT) / (2)) * vy[i][j] *
 																						 (((u0[i][j + 1] -
@@ -129,17 +128,47 @@ void solve_AD_equation_(double D, int IT_MAX)
 																							  (2 * delta), k))
 																					   + ((deltaT) / (2)) * D *
 																						 (((u0[i + 1][j] +
-																							u0[i - 1][j] +
+																							u0[nx][j] +
 																							u0[i][j + 1] +
 																							u0[i][j - 1] -
 																							4 * u0[i][j]) /
 																						   (pow(delta, 2))) +
 																						  pow((u1[i + 1][j] +
-																							   u1[i - 1][j] +
+																							   u1[nx][j] +
 																							   u1[i][j + 1] +
 																							   u1[i][j - 1]) /
 																							  (pow(delta, 2)), k)));
 					std::cout<<u1[i][j]<<std::endl;
+					}
+					else if (i == nx)
+					{
+						u1[i][j] = (1.0 / (1 + (2 * D * deltaT) / (pow(delta, 2)))) * (u0[i][j] -
+																					   ((deltaT) / (2)) * vx[i][j] *
+																					   (((u0[0][j] - u0[i-1][j]) /
+																						 (2 * delta)) +
+																						pow((u1[0][j] -
+																							 u1[i-1][j]) /
+																							(2 * delta), k))
+																					   - ((deltaT) / (2)) * vy[i][j] *
+																						 (((u0[i][j + 1] -
+																							u0[i][j - 1]) /
+																						   (2 * delta)) +
+																						  pow((u1[i][j + 1] -
+																							   u1[i][j - 1]) /
+																							  (2 * delta), k))
+																					   + ((deltaT) / (2)) * D *
+																						 (((u0[0][j] +
+																							u0[i-1][j] +
+																							u0[i][j + 1] +
+																							u0[i][j - 1] -
+																							4 * u0[i][j]) /
+																						   (pow(delta, 2))) +
+																						  pow((u1[0][j] +
+																							   u1[i-1][j] +
+																							   u1[i][j + 1] +
+																							   u1[i][j - 1]) /
+																							  (pow(delta, 2)), k)));
+						std::cout<<u1[i][j]<<std::endl;
 					}
 					else
 					{
