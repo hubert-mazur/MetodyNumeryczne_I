@@ -15,17 +15,17 @@ void solve_AD_equation_(double D, int IT_MAX)
 	double vy[nx + 1][ny + 1];
 	double vMax, deltaT;
 
-	// wczytanie funkcji strumienia
-
 	std::fstream inputFile;
 	std::fstream calka;
 	std::fstream sredniePolozeniePakietu;
 	std::fstream mapaRozkladu;
+	std::fstream test;
 
-	inputFile.open("../psi.dat");
-	calka.open("../calka_D=" + std::to_string(D) + "IT_MAX=" + std::to_string(IT_MAX), std::ios::out);
-	sredniePolozeniePakietu.open("../xsr_D=" + std::to_string(D) + "IT_MAX=" + std::to_string(IT_MAX), std::ios::out);
-	mapaRozkladu.open("../mapa_D=" + std::to_string(D) + "IT_MAX=" + std::to_string(IT_MAX), std::ios::out);
+	inputFile.open("psi.dat");
+	calka.open("calka_D=" + std::to_string(D) + "IT_MAX=" + std::to_string(IT_MAX) + ".dat", std::ios::out);
+	sredniePolozeniePakietu.open("xsr_D=" + std::to_string(D) + "IT_MAX=" + std::to_string(IT_MAX) + ".dat", std::ios::out);
+	mapaRozkladu.open("mapa_D=" + std::to_string(D) + "IT_MAX=" + std::to_string(IT_MAX) + ".dat", std::ios::out);
+	test.open("test.dat", std::ios::out);
 
 	if (inputFile.fail())
 	{
@@ -37,17 +37,17 @@ void solve_AD_equation_(double D, int IT_MAX)
 	{
 		int a, b;
 		for (int i = 0; i <= nx; i++)
-			for (int j = 0; j <= nx; j++)
+			for (int j = 0; j <= ny; j++)
 				inputFile >> a >> b >> psi[i][j];
 	}
 
 	// wyznaczenie pola predkosci
-	for (int i = 0; i < nx - 1; i++)
+	for (int i = 1; i < nx; i++)
 	{
-		for (int j = 0; j < ny - 1; j++)
+		for (int j = 1; j < ny; j++)
 		{
 			vx[i][j] = (psi[i][j + 1] - psi[i][j - 1]) / (2 * delta);
-			vy[i][j] = (psi[i + 1][j] - psi[i - 1][j]) / (2 * delta);
+			vy[i][j] = -(psi[i + 1][j] - psi[i - 1][j]) / (2 * delta);
 		}
 	}
 
@@ -62,12 +62,19 @@ void solve_AD_equation_(double D, int IT_MAX)
 
 	// na lewym i prawym brzegu przepisanie predkosci z sasiednich wezlow
 	for (int j = 0; j <= ny; j++)
-		vx[0][j] = vy[1][j];
+		vx[0][j] = vx[1][j];
 
 	for (int j = 0; j <= ny; j++)
-		vx[nx][j] = vy[nx - 1][j];
+		vx[nx][j] = vx[nx - 1][j];
 
-	// wyznaczenie vMac i deltaT
+
+	for (int i=0;i<=nx;i++) {
+		for (int j=0;j<=ny;j++) 
+			test << i << " " << j << " " << vx[i][j] << " " << vy[i][j] <<std::endl;
+			test << std::endl;
+	}
+
+	// wyznaczenie vMax i deltaT
 
 	{
 		double maxModul = -1.0;
@@ -84,6 +91,7 @@ void solve_AD_equation_(double D, int IT_MAX)
 
 		vMax = maxModul;
 		deltaT = delta / (4 * vMax);
+		std::cout<<deltaT<<std::endl;
 	}
 
 	// inicjalizacja gestoci
@@ -92,121 +100,65 @@ void solve_AD_equation_(double D, int IT_MAX)
 		for (int j = 0; j <= ny; j++)
 		{
 			u0[i][j] = rozkladGestoci(delta * i, delta * j);
+			// std::cout<<u0[i][j]<<std::endl
+			;
 		}
 	}
+
+	// for (int i=0;i<=nx;i++) {
+	// 	for (int j=0;j<=ny;j++)
+	// 		test << u0[i][j] <<std::endl;
+	// }
+
 
 	for (int it = 1; it <= IT_MAX; it++)
 	{
 		// inicjalizacja kolejngeo kroku
 		for (int i = 0; i <= nx; i++)
-			for (int j = 0; j <= ny; j++)
+			for (int j = 0; j <= ny; j++) {
 				u1[i][j] = u0[i][j];
+			}
 
 		for (int k = 1; k <= 20; k++)
 		{
-			for (int i = 0; i <= nx; i++)
+			for (int j = 1; j < ny; j++)
 			{
-				for (int j = 1; j < ny; j++)
+				for (int i = 0; i <= nx; i++)
 				{
+
+					int im1, ip1;
+					if (i==0) {
+						im1 = nx;
+						ip1 = i+1;
+					} else if (i == nx) {
+						im1 = i-1;
+						ip1 = 0;
+					} else {
+						im1 = i-1;
+						ip1 = i+1;
+					}
+						
 					if ((i >= i1 && i <= i2) && (j <= j2))
 						continue;
-					else if (i == 0)
-					{
-						u1[i][j] = (1.0 / (1 + (2 * D * deltaT) / (pow(delta, 2)))) * (u0[i][j] -
-																					   ((deltaT) / (2)) * vx[i][j] *
-																					   (((u0[i + 1][j] - u0[nx][j]) /
-																						 (2 * delta)) +
-																						pow((u1[i + 1][j] -
-																							 u1[nx][j]) /
-																							(2 * delta), k))
-																					   - ((deltaT) / (2)) * vy[i][j] *
-																						 (((u0[i][j + 1] -
-																							u0[i][j - 1]) /
-																						   (2 * delta)) +
-																						  pow((u1[i][j + 1] -
-																							   u1[i][j - 1]) /
-																							  (2 * delta), k))
-																					   + ((deltaT) / (2)) * D *
-																						 (((u0[i + 1][j] +
-																							u0[nx][j] +
-																							u0[i][j + 1] +
-																							u0[i][j - 1] -
-																							4 * u0[i][j]) /
-																						   (pow(delta, 2))) +
-																						  pow((u1[i + 1][j] +
-																							   u1[nx][j] +
-																							   u1[i][j + 1] +
-																							   u1[i][j - 1]) /
-																							  (pow(delta, 2)), k)));
-					std::cout<<u1[i][j]<<std::endl;
-					}
-					else if (i == nx)
-					{
-						u1[i][j] = (1.0 / (1 + (2 * D * deltaT) / (pow(delta, 2)))) * (u0[i][j] -
-																					   ((deltaT) / (2)) * vx[i][j] *
-																					   (((u0[0][j] - u0[i-1][j]) /
-																						 (2 * delta)) +
-																						pow((u1[0][j] -
-																							 u1[i-1][j]) /
-																							(2 * delta), k))
-																					   - ((deltaT) / (2)) * vy[i][j] *
-																						 (((u0[i][j + 1] -
-																							u0[i][j - 1]) /
-																						   (2 * delta)) +
-																						  pow((u1[i][j + 1] -
-																							   u1[i][j - 1]) /
-																							  (2 * delta), k))
-																					   + ((deltaT) / (2)) * D *
-																						 (((u0[0][j] +
-																							u0[i-1][j] +
-																							u0[i][j + 1] +
-																							u0[i][j - 1] -
-																							4 * u0[i][j]) /
-																						   (pow(delta, 2))) +
-																						  pow((u1[0][j] +
-																							   u1[i-1][j] +
-																							   u1[i][j + 1] +
-																							   u1[i][j - 1]) /
-																							  (pow(delta, 2)), k)));
-						std::cout<<u1[i][j]<<std::endl;
-					}
-					else
-					{
-						u1[i][j] = (1.0 / (1 + (2 * D * deltaT) / (pow(delta, 2)))) * (u0[i][j] -
-																					   ((deltaT) / (2)) * vx[i][j] *
-																					   (((u0[i + 1][j] - u0[i - 1][j]) /
-																						 (2 * delta)) +
-																						pow((u1[i + 1][j] -
-																							 u1[i - 1][j]) /
-																							(2 * delta), k))
-																					   - ((deltaT) / (2)) * vy[i][j] *
-																						 (((u0[i][j + 1] -
-																							u0[i][j - 1]) /
-																						   (2 * delta)) +
-																						  pow((u1[i][j + 1] -
-																							   u1[i][j - 1]) /
-																							  (2 * delta), k))
-																					   + ((deltaT) / (2)) * D *
-																						 (((u0[i + 1][j] +
-																							u0[i - 1][j] +
-																							u0[i][j + 1] +
-																							u0[i][j - 1] -
-																							4 * u0[i][j]) /
-																						   (pow(delta, 2))) +
-																						  pow((u1[i + 1][j] +
-																							   u1[i - 1][j] +
-																							   u1[i][j + 1] +
-																							   u1[i][j - 1]) /
-																							  (pow(delta, 2)), k)));
-						std::cout<<u1[i][j]<<std::endl;
-					}
+
+					u1[i][j] = (1.0/(1 + (2*D * deltaT)/(pow(delta,2)))) * (u0[i][j] 
+					-(deltaT/2.0) * vx[i][j] * (u0[ip1][j] - u0[im1][j] + u1[ip1][j] - u1[im1][j])/2/delta
+					- deltaT/2 * vy[i][j] * (u0[i][j+1] - u0[i][j-1] + u1[i][j+1] - u1[i][j-1])/2/delta
+					+ deltaT/2 * D*(u0[ip1][j] + u0[im1][j] + u0[i][j+1] + u0[i][j-1] - 4*u0[i][j] + u1[ip1][j] + u1[im1][j] + u1[i][j+1] + u1[i][j-1])/delta/delta
+					);
 				}
 			}
+				
 		}
-
 		for (int i = 0; i <= nx; i++)
 			for (int j = 0; j <= ny; j++)
 				u0[i][j] = u1[i][j];
+
+
+
+		// 	for (int i=0;i<=nx;i++) {
+		// for (int j=0;j<=ny;j++)
+		// 	test << i << " " << j << " " << u1[i][j] << std::endl;
 
 		double c = 0;
 		double xsr = 0;
@@ -215,21 +167,38 @@ void solve_AD_equation_(double D, int IT_MAX)
 			for (int j = 0; j <= ny; j++)
 			{
 				c += u0[i][j];
-				c *= pow(delta, 2);
 				xsr += i * delta * u0[i][j];
-				xsr *= pow(delta, 2);
 			}
 		}
 
-		calka << it << " " << c << std::endl;
-		sredniePolozeniePakietu << it << " " << xsr << std::endl;
+		c *= pow(delta, 2);
+		xsr *= pow(delta, 2);
+
+
+		calka << it * deltaT << " " << c << std::endl;
+		sredniePolozeniePakietu << it * deltaT << " " << xsr << std::endl;
+		std::cout<< "nr it: " << it  << " calka: " << c<<std::endl;
+		std::cout<<"xsr: " << xsr <<std::endl;
+	
+	}
+
+		for (int i=0;i<=nx;i++) {
+			for (int j=0;j<=ny;j++) {
+				mapaRozkladu << i << " " << j << " " << " " <<u1[i][j] <<std::endl;
+			}
+			mapaRozkladu << std::endl;
+		}
+
 
 	}
 
-}
+
 
 double rozkladGestoci(double x, double y)
 {
+	// std::cout<<x << " " << y <<std::endl;
 	double value = (1.0 / (2 * M_PI * pow(sigma, 2))) * exp(-(pow(x - xA, 2) + pow(y - yA, 2)) / (2 * pow(sigma, 2)));
+	// std::cout<<value<<std::endl;
+	return value;
 }
 

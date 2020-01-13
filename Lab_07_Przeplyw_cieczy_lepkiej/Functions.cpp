@@ -162,7 +162,11 @@ void relaksacja_NS(double Q_in)
     for (int i = 1; i < nx; i++)
     {
         for (int j = 1; j < ny; j++)
-            file << i << " " << j << " " << psi[i][j] << " " << dzeta[i][j] << " " << u[i][j] << " " << v[i][j] << std::endl;
+            if (i <= i_1 && j <= j_1)
+                file << i << " " << j << " " << psi[i_1][j_1] << " " << dzeta[i_1][j_1] << " " << u[i][j] << " " << v[i][j] << std::endl;
+            else
+                file << i << " " << j << " " << psi[i][j] << " " << dzeta[i][j] << " " << u[i][j] << " " << v[i][j] << std::endl;
+
         file << std::endl;
     }
     del(&psi, nx + 1);
